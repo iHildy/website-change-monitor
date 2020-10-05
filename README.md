@@ -33,6 +33,8 @@
  
 *  Slack alert notification 
 
+*  Discord alert notification
+
 *  Daily email to confirm that the app is working
 
 *  Front page (just to check that the system is working and to ping it if necessary (Useful for Heroku) 
