@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+const { Webhook, MessageBuilder } = require("webhook-discord");
 
 //Express configuration
 const app = express();
@@ -11,13 +12,16 @@ const PORT = process.env.PORT || 3000;
 
 
 //Main configuration variables
-const urlToCheck = `http://urlyouwant.com/tocheck`;
-const elementsToSearchFor = ['Text you want to watch for', 'imageYouWantToCheckItsExistence.png'];
-const checkingFrequency = 5 * 60000; //first number represent the checkingFrequency in minutes
+const urlToCheck = `https://www.theblackdog.com/collections/mens-sweatshirts/products/mens-classic-heavyweight-hood?variant=31487000641630`;
+const elementsToSearchFor = ['ADD TO CART', 'imageYouWantToCheckItsExistence.png'];
+const checkingFrequency = 10 * 60000; //first number represent the checkingFrequency in minutes
 
 //Slack Integration
 const SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX';
 const slack = require('slack-notify')(SLACK_WEBHOOK_URL);
+
+//Discord Integration
+const Hook = new Webhook("https://discord.com/api/webhooks/762091942233243679/GxugIBZbKxZLHtUeFrKckB4k1ha_PbJqPiu8LFm8VQUTTaVZKwyD2HanCc7WmlMfnQsT")
 
 //SendGrid Email Integration
 const SENDGRID_APY_KEY = 'AA.AAAA_AAAAAAAAAAAAA.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
@@ -58,6 +62,17 @@ const intervalId = setInterval(function () {
                             console.log('Message received in slack!');
                         }
                     });
+
+                    // Discord Alert Notification
+                    const discordmsg = new MessageBuilder()
+                        .setName("Web Monitor")
+                        .setColor("#00ff1e")
+                        .setTitle('Web Monitor Executed Successfuly')
+                        .setDescription("Keywords found!", true)
+                        .addField('Checkout!', `${urlToCheck}`, true)
+                        .setFooter('Web Monitor | Forked by iHildy#3839', 'https://avatars2.githubusercontent.com/u/25069719?s=460&u=0758922d6a85a09f971fbf778bb720788a2f2e5b&v=4')
+                        .setTime();
+                    Hook.send(discordmsg);
 
                     // Email Alert Notification
                     const msg = {
